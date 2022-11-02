@@ -4,11 +4,25 @@
 package quotes;
 
 import org.junit.jupiter.api.Test;
+
+import java.io.FileNotFoundException;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static quotes.App.randomQuote;
 
 class AppTest {
     @Test void appHasAGreeting() {
         App classUnderTest = new App();
         assertNotNull(classUnderTest.getGreeting(), "app should have a greeting");
     }
+
+    @Test void badFile() {
+        assertThrows(IllegalArgumentException.class, () -> randomQuote("empty.json"));
+    }
+
+    @Test void noFile() {
+        assertThrows(FileNotFoundException.class, () -> randomQuote("no.json"));
+    }
+
+
 }

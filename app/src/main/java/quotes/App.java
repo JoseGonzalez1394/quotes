@@ -3,12 +3,62 @@
  */
 package quotes;
 
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Random;
+
 public class App {
     public String getGreeting() {
         return "Hello World!";
     }
 
-    public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+    public static String getFilePath(){
+        String userPath = System.getProperty("user.dir");
+        if(userPath.endsWith("app")){
+            return userPath + "/src/main/resources/";
+        }
+        else{
+            return userPath + "/app/src/main/resources/";
+        }
+    }
+
+    public static FileReader readerFile(String path) throws FileNotFoundException {
+        return new FileReader(path);
+    }
+
+    public static Quote[] getArray(FileReader filereader){
+        Quote[] quotes;
+        Gson gson = new Gson();
+        quotes = gson.fromJson(filereader, Quote[].class);
+        if(quotes != null) {
+            return quotes;
+        }
+        else{
+            throw new IllegalArgumentException("Empty json file");
+        }
+    }
+
+    public static int randomNumber(Quote[] quotes){
+        int size = quotes.length;
+        Random num = new Random();
+        return num.nextInt(0, size);
+    }
+
+    public static void randomQuote(String fileName) throws IOException{
+        Quote[] quotes = getArray(readerFile(getFilePath() + fileName));
+        int num = randomNumber(quotes);
+        String text = quotes[num].text;
+        String author = quotes[num].author;
+        System.out.println(author + "\n" + text);
+    }
+
+    public static void main(String[] args) throws IOException{
+        randomQuote("recentquotes.json");
     }
 }
