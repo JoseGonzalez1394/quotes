@@ -58,7 +58,51 @@ public class App {
         System.out.println(author + "\n" + text);
     }
 
+    public static void authorQuote(String author) throws IOException{
+        Quote[] quotes = getArray(readerFile(getFilePath() + "recentquotes.json"));
+        for ( Quote quote : quotes){
+            if ( quote.author.contains(author)) {
+                System.out.println(quote.author + "\n" + quote.text);
+                break;
+            }
+        }
+    }
+
+    public static void wordQuote(String word) throws IOException{
+        Quote[] quotes = getArray(readerFile(getFilePath() + "recentquotes.json"));
+        for ( Quote quote : quotes){
+                if (quote.text.contains(word)) {
+                    System.out.println(quote.author + "\n" + quote.text);
+                    break;
+                }
+        }
+        System.out.println("The quote database does not include " + word);
+    }
+
+    public static void switchBoard(String[] args) throws IOException{
+        switch (args[0]){
+            case ("author"):{
+                String name = args[1];
+                for ( int i = 2; i < args.length; i++){
+                    name = name + " " + args[i];
+                }
+                authorQuote(name);
+                break;
+                }
+            case("contains"):{
+                wordQuote(args[1]);
+                break;
+            }
+            case("random"):{
+                randomQuote("recentquotes.json");
+            }
+            default:{
+                System.out.println("Please type either author or contains before search query. Or use random for a surprise");
+            }
+        }
+    }
+
     public static void main(String[] args) throws IOException{
-        randomQuote("recentquotes.json");
+        switchBoard(args);
     }
 }
