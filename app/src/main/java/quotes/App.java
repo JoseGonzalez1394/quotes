@@ -7,13 +7,14 @@ package quotes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Random;
 
 public class App {
+    static Gson gson = new GsonBuilder().setPrettyPrinting().create();
     public String getGreeting() {
         return "Hello World!";
     }
@@ -102,7 +103,28 @@ public class App {
         }
     }
 
+    public static HttpURLConnection createConnection(String api) throws MalformedURLException, IOException {
+        URL createdURL = new URL(api);
+        HttpURLConnection URLConnection = (HttpURLConnection) createdURL.openConnection();
+        URLConnection.setRequestMethod("GET");
+        return URLConnection;
+    }
+
+    public static  String readFromConnection(HttpURLConnection connection) throws IOException {
+        InputStreamReader fileInputStreamReader = new InputStreamReader(connection.getInputStream());
+        BufferedReader fileBufferedReader = new BufferedReader(fileInputStreamReader);
+        String quoteData = fileBufferedReader.readLine();
+        return quoteData;
+    }
+
+    public static RonSwanson convertToQuotes(String quoteData) {
+        RonSwanson quote = gson.fromJson(quoteData, RonSwanson.class);
+        return quote;
+    }
+
+
     public static void main(String[] args) throws IOException{
-        switchBoard(args);
+        //switchBoard(args);
+      convertToQuotes(readFromConnection(createConnection("https://ron-swanson-quotes.herokuapp.com/v2/quotes/3")));
     }
 }
