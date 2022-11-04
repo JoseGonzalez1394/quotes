@@ -110,7 +110,7 @@ public class App {
                 break;
             }
             default:{
-                System.out.println("Please type either author or contains before search query. Or use random for a surprise");
+                System.out.println("Please type either author or contains before search query. Or type in random or pokemon for a surprise");
             }
         }
     }
