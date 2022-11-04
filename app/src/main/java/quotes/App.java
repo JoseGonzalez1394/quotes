@@ -51,6 +51,12 @@ public class App {
         return num.nextInt(0, size);
     }
 
+    public static int randomNumber(){
+        int size = 151;
+        Random num = new Random();
+        return num.nextInt(1, size);
+    }
+
     public static void randomQuote(String fileName) throws IOException{
         Quote[] quotes = getArray(readerFile(getFilePath() + fileName));
         int num = randomNumber(quotes);
@@ -99,7 +105,7 @@ public class App {
                 break;
             }
             case ("pokemon"):{
-               String description = convertToQuotes(readFromConnection(createConnection("https://pokeapi.co/api/v2/pokemon-species/" + args[1])));
+               String description = convertToQuotes(readFromConnection(createConnection("https://pokeapi.co/api/v2/pokemon-species/" + randomNumber())));
                 System.out.println(description);
                 break;
             }
@@ -130,7 +136,7 @@ public class App {
     }
 
     static public void writeToFile(Pokemon pokemon) throws IOException {
-        File pokeFile = new File("./pokemon.json");
+       File pokeFile = new File("./pokemon.json");
         try(FileWriter pokeFileWriter = new FileWriter(pokeFile)){
             gson.toJson(pokemon, pokeFileWriter);
             System.out.println("File was created successfully");
