@@ -96,6 +96,12 @@ public class App {
             }
             case("random"):{
                 randomQuote("recentquotes.json");
+                break;
+            }
+            case ("pokemon"):{
+               String description = convertToQuotes(readFromConnection(createConnection("https://pokeapi.co/api/v2/pokemon-species/" + args[1])));
+                System.out.println(description);
+                break;
             }
             default:{
                 System.out.println("Please type either author or contains before search query. Or use random for a surprise");
@@ -117,14 +123,23 @@ public class App {
         return quoteData;
     }
 
-    public static RonSwanson convertToQuotes(String quoteData) {
-        RonSwanson quote = gson.fromJson(quoteData, RonSwanson.class);
-        return quote;
+    public static String convertToQuotes(String quoteData) {
+        Pokemon quote = gson.fromJson(quoteData, Pokemon.class);
+        String description = quote.flavor_text_entries[0].getFlavor_text();
+        return description;
     }
 
+    static public void writeToFile(Pokemon pokemon) throws IOException {
+        File pokeFile = new File("./pokemon.json");
+        try(FileWriter pokeFileWriter = new FileWriter(pokeFile)){
+            gson.toJson(pokemon, pokeFileWriter);
+            System.out.println("File was created successfully");
+        } catch (IOException ioe){
+            ioe.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) throws IOException{
-        //switchBoard(args);
-      convertToQuotes(readFromConnection(createConnection("https://ron-swanson-quotes.herokuapp.com/v2/quotes/3")));
+        switchBoard(args);
     }
 }
