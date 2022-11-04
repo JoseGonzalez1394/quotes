@@ -7,13 +7,14 @@ package quotes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Random;
 
 public class App {
+    static Gson gson = new GsonBuilder().setPrettyPrinting().create();
     public String getGreeting() {
         return "Hello World!";
     }
@@ -48,6 +49,12 @@ public class App {
         int size = quotes.length;
         Random num = new Random();
         return num.nextInt(0, size);
+    }
+
+    public static int randomNumber(){
+        int size = 151;
+        Random num = new Random();
+        return num.nextInt(1, size);
     }
 
     public static void randomQuote(String fileName) throws IOException{
@@ -95,10 +102,46 @@ public class App {
             }
             case("random"):{
                 randomQuote("recentquotes.json");
+                break;
+            }
+            case ("pokemon"):{
+               String description = convertToQuotes(readFromConnection(createConnection("https://pokeapi.co/api/v2/pokemon-species/" + randomNumber())));
+                System.out.println(description);
+                break;
             }
             default:{
-                System.out.println("Please type either author or contains before search query. Or use random for a surprise");
+                System.out.println("Please type either author or contains before search query. Or type in random or pokemon for a surprise");
             }
+        }
+    }
+
+    public static HttpURLConnection createConnection(String api) throws MalformedURLException, IOException {
+        URL createdURL = new URL(api);
+        HttpURLConnection URLConnection = (HttpURLConnection) createdURL.openConnection();
+        URLConnection.setRequestMethod("GET");
+        return URLConnection;
+    }
+
+    public static  String readFromConnection(HttpURLConnection connection) throws IOException {
+        InputStreamReader fileInputStreamReader = new InputStreamReader(connection.getInputStream());
+        BufferedReader fileBufferedReader = new BufferedReader(fileInputStreamReader);
+        String quoteData = fileBufferedReader.readLine();
+        return quoteData;
+    }
+
+    public static String convertToQuotes(String quoteData) {
+        Pokemon quote = gson.fromJson(quoteData, Pokemon.class);
+        String description = quote.flavor_text_entries[0].getFlavor_text();
+        return description;
+    }
+
+    static public void writeToFile(Pokemon pokemon) throws IOException {
+       File pokeFile = new File("./pokemon.json");
+        try(FileWriter pokeFileWriter = new FileWriter(pokeFile)){
+            gson.toJson(pokemon, pokeFileWriter);
+            System.out.println("File was created successfully");
+        } catch (IOException ioe){
+            ioe.printStackTrace();
         }
     }
 

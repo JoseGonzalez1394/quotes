@@ -6,9 +6,10 @@ package quotes;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static quotes.App.randomQuote;
+import static quotes.App.*;
 
 class AppTest {
     @Test void appHasAGreeting() {
@@ -24,5 +25,11 @@ class AppTest {
         assertThrows(FileNotFoundException.class, () -> randomQuote("no.json"));
     }
 
+    @Test void randomNumberTest(){
+        assertTrue(randomNumber() <= 151 && randomNumber() > 0);
+    }
 
+    @Test void badString() {
+        assertThrows(MalformedURLException.class, () -> createConnection("the"));
+    }
 }
